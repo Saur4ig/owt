@@ -1,0 +1,323 @@
+basePath: /v1
+definitions:
+  model.Skill:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  model.User:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      skills:
+        items:
+          $ref: '#/definitions/model.UserSkill'
+        type: array
+      surname:
+        type: string
+    required:
+    - address
+    - email
+    - name
+    - phone
+    - surname
+    type: object
+  model.UserSkill:
+    properties:
+      level:
+        maximum: 10
+        minimum: 0
+        type: integer
+      name:
+        type: string
+    required:
+    - level
+    - name
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  title: OWT challenge
+  version: "1.0"
+paths:
+  /v1/skills:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Skill'
+            type: array
+        "500":
+          description: Internal Server Error
+      summary: Shows all skills
+      tags:
+      - skills
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: skills to create
+        in: body
+        name: skills
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/model.Skill'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: creates all skills from body
+      tags:
+      - skills
+  /v1/skills/{name}:
+    delete:
+      parameters:
+      - description: skill
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: deletes skill from pool and removes it for every user
+      tags:
+      - skills
+  /v1/users:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "400":
+          description: Bad Request
+      summary: Shows all users
+      tags:
+      - users
+    post:
+      parameters:
+      - description: user to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: something like user registration
+      tags:
+      - users
+  /v1/users/{id}:
+    delete:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: deletes user with all his skills
+      tags:
+      - users
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      summary: Shows user
+      tags:
+      - users
+    put:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      summary: updates basic info about the user
+      tags:
+      - users
+  /v1/users/{id}/skills:
+    post:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: user skill
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserSkill'
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: Adds skill by name to a user
+      tags:
+      - skills
+    put:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: skill name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: user skill
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserSkill'
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      summary: updates level of the skill for user
+      tags:
+      - skills
+  /v1/users/{id}/skills/{name}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: skill name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
+      summary: deletes just a user skill
+      tags:
+      - skills
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
